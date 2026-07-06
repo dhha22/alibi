@@ -1,0 +1,13 @@
+{
+  "name": "code-archaeology",
+  "owner": {
+    "name": "hadonghyun"
+  },
+  "plugins": [
+    {
+      "name": "code-archaeology",
+      "source": "./",
+      "description": "git blame tells you who. This tells you why. — alibi, the detective who never made an arrest, recovers the story behind your strangest code."
+    }
+  ]
+}
