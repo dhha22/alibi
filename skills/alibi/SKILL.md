@@ -10,8 +10,10 @@ description: >
   still holds. Use whenever the user asks why a line/function/weird workaround exists,
   whether a strange piece of code is safe to delete ("can I remove this setTimeout?",
   "is this dead code?", "why is this timeout 30 seconds?"), who really wrote something
-  and why ("who wrote this and why", "blame this line"), or the history/origin/rationale
-  of existing code — or says "run alibi", "alibi <file:line>", "alibi <SHA>". Do NOT use
+  and why ("who wrote this and why", "blame this line"), the history/origin/rationale
+  of existing code, or the full story of a specific commit or PR ("why did this change
+  land?", "what was the debate on PR #123?", "give me the dossier on this commit") —
+  or says "run alibi", "alibi <file:line>", "alibi <SHA>". Do NOT use
   it to: write or modify code, review a diff/PR for bugs, review a spec or PRD before
   implementation (that's a different job), answer general git usage questions ("how do I
   rebase?"), or investigate anything not tracked in a git repository.
@@ -45,6 +47,16 @@ Run as `/alibi`, or in natural language ("run alibi", "why is this line like thi
 If none of these are given, open intake with one line: *"Let's file the case first —
 which line looks suspicious?"* Do not investigate without a concrete target; a case
 without a crime scene produces a report about nothing.
+
+## Investigation modes
+
+- **why-not-who** (default, this file) — the question is about a *line or block of
+  code*: why it exists, who really wrote it, whether it can go. Run the routine below.
+- **commit-to-story** — the question is about a *commit or PR itself*: "why did this
+  change land?", "what was debated?", "dossier on <SHA>". Read
+  `references/modes/commit-to-story.md` and follow it. Note the difference: a SHA
+  handed in as a *lead* on a line still belongs to why-not-who (Step 4); a SHA that
+  *is the subject* belongs to commit-to-story.
 
 ## Voice rules (apply to every output)
 
@@ -221,7 +233,9 @@ a COLD CASE with the import commit as the sole exhibit.
 
 After the disposition, when the origin commit has an unexplored PR/issue trail, offer —
 in one line, never automatically — to go deeper: *"Want the full dossier on why that
-change landed? I can chase the PR and review thread."*
+change landed? I can chase the PR and review thread."* If the user accepts, switch to
+commit-to-story mode (`references/modes/commit-to-story.md`) with the origin commit as
+the subject.
 
 ## Worked example
 
@@ -244,3 +258,7 @@ years. Give it an honorable discharge."*
   file (ignore-revs entries + message-pattern + whitespace-only-diff checks), one per
   line, ready to feed as `--ignore-rev` flags. Use it when a file's history is long or
   heavily reformatted; for a short history the manual loop in Step 3 is fine.
+- `scripts/resolve_pr.sh <sha> [repo-dir]` — prints the PR(s) carrying a commit as
+  `number<TAB>title<TAB>url` lines via the GitHub API, falling back to `(#n)` markers
+  in the commit subject when `gh` is unavailable. Empty output means no PR trail —
+  that absence is itself evidence.

@@ -22,3 +22,26 @@ what you can rely on getting, every time:
 did. What it doesn't give you is a ruling, an auditable evidence chain, or the same
 routine on the day it's tired and you're in a hurry. alibi is the difference between
 a good detective having a good day and a precinct with a case-file standard.
+
+## Round 2 — commit-to-story mode (same repo, 2026-07-07)
+
+Question: *"Give me the full story of commit 19476aa5f — why did this change land,
+and what was the debate around it?"* Full output:
+[commit-to-story-react.md](../examples/transcripts/commit-to-story-react.md).
+
+| | Raw Claude | alibi (dossier mode) |
+|---|---|---|
+| Import vehicle PR #29061, default-flip PR #30622 | ✅ found | ✅ found |
+| Declares the pre-open-sourcing debate unreachable (no invented quotes) | ✅ | ✅ + probes and exhibits the 404 (E-7) |
+| Verdict on "does the rationale still hold?" | ❌ prose conclusion only | ✅ **JUSTIFIED** + disposition + last witnesses to ask |
+| Machine-consumable `🔗 Related` footer (feeds the next investigation) | ❌ | ✅ |
+| Rich extras | same-day fixup commits, 2025 diagnostics refactor | negative test fixture as scope evidence, Rust port carrying the option forward |
+| Cost | 418s / 55k tokens | 280s / 48k tokens |
+
+Same lesson, one new data point: on this round the skill was *cheaper* — the routine
+(resolve PR → chase thread → check aftermath → rule) spends fewer tokens than
+freestyle exploration, because it knows when to stop digging.
+
+One more finding worth reporting: with alibi installed, the "baseline" first had to be
+re-run — the plain question "give me the full story of commit X" **auto-triggered the
+skill**. The trigger working that well is the point of shipping it as a skill.

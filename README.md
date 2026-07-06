@@ -25,8 +25,19 @@ git clone https://github.com/YOU/code-archaeology ~/.claude/skills/code-archaeol
 - "Why is this timeout 30 seconds? `src/auth/session.ts:47`"
 - "Can I delete this `setTimeout(resolve, 0)`? It looks pointless."
 - "who wrote this and why — and don't tell me it was the prettier commit"
+- "Give me the full story of commit 4f2a91c — why did this change land?"
+
+## Investigation modes
+
+| Mode | Question it answers | Output |
+|---|---|---|
+| **why-not-who** | "why does this *line* exist — can it go?" | case file with a verdict |
+| **commit-to-story** | "why did this *commit/PR* land — what was the debate?" | dossier: problem → debate → decision → aftermath |
+
+Real transcripts against facebook/react: [why-not-who](examples/transcripts/why-not-who-react.md) ·
+[commit-to-story](examples/transcripts/commit-to-story-react.md)
 
 ---
 
-Status: v1 (why-not-who mode). Roadmap: commit-to-story, first-broken, incident-trace,
+Status: v2 (why-not-who + commit-to-story modes). Roadmap: first-broken, incident-trace,
 design-rationale, repo-tour investigation modes.
