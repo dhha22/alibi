@@ -78,13 +78,19 @@ was deleted). For a SHA, skip to Step 4 with that commit as the origin candidate
 ### Step 2 — Initial blame, properly armed
 
 ```bash
-git blame -w -C -C -C -L <start>,<end> -- <file>
+git blame -w [--ignore-revs-file .git-blame-ignore-revs] -L <start>,<end> -- <file>
 ```
 
-`-w` ignores whitespace; the triple `-C` follows code moved or copied across files.
-Never run bare `git blame` — the bare form is precisely the tool that frames the wrong
-witness. If the repo has a `.git-blame-ignore-revs` file, add
-`--ignore-revs-file .git-blame-ignore-revs` from the start.
+`-w` ignores whitespace; add `--ignore-revs-file` whenever the repo ships one — its
+existence is the maintainers telling you which commits frame the wrong witness. Never
+run bare `git blame`; the bare form is precisely the tool that lies.
+
+Escalate to `-C -C -C` (follows code moved/copied across files) only when the cheap
+blame dead-ends — the result still looks like noise after the loop below, or the line
+seems to have arrived in a refactor. On large repositories, and especially on partial
+clones (`--filter=blob:none`), copy detection can take minutes or hang while fetching
+old blobs: scope it tightly with `-L`, give it a timeout, and if it stalls fall back to
+`git log -S` tracing (Step 3) which stays fast at any repo size.
 
 ### Step 3 — The noise-judgment loop (the heart of this skill)
 
