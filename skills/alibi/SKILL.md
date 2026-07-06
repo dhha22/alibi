@@ -111,6 +111,15 @@ If the commit is noise, re-run the blame excluding it and loop:
 git blame -w -C -C -C --ignore-rev <noise-sha> [--ignore-rev <another>...] -L <start>,<end> -- <file>
 ```
 
+**Move/extract commits are a special noise layer.** When the loop lands on a
+refactor that created or split the file ("extract helpers", "move X to Y", file
+renames), `-C -C -C` often fails to cross the file boundary — copy detection has
+size thresholds. Check `git show <sha>` : if the line was deleted from another file
+in the same commit, it was moved, not authored. Follow it into the source file:
+`git log -S'<distinctive fragment of the line>' --oneline` finds every commit that
+added or removed that code anywhere in history — the oldest hit is the true origin
+candidate. Then resume the routine on that commit.
+
 Accumulate `--ignore-rev` flags across iterations. **Cap the loop at 5 iterations.**
 If you are still peeling noise at the cap, stop and report what you found so far —
 rule the case COLD CASE with the peeled layers listed as exhibits, rather than looping
