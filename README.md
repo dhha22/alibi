@@ -22,8 +22,18 @@ alibi:
 
 ## Install
 
+Install as a Claude Code plugin (two prompts):
+
+```
+/plugin marketplace add dhha22/code-archaeology
+/plugin install alibi@code-archaeology
+```
+
+Or, if you prefer to install the skill by hand, copy the folder into your skills directory:
+
 ```bash
-git clone https://github.com/dhha22/code-archaeology ~/.claude/skills/code-archaeology
+git clone https://github.com/dhha22/code-archaeology
+cp -r code-archaeology/skills/alibi ~/.claude/skills/alibi
 ```
 
 ## Try asking

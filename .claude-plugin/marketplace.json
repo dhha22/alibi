@@ -1,13 +1,17 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "code-archaeology",
+  "description": "Git-archaeology skills. alibi: the detective who tells you WHY the code exists, not who to blame.",
   "owner": {
-    "name": "hadonghyun"
+    "name": "harada.ha",
+    "url": "https://github.com/dhha22"
   },
   "plugins": [
     {
-      "name": "code-archaeology",
+      "name": "alibi",
+      "description": "Recovers WHY a line of code exists: skips noise commits blame frames people with, finds the true origin commit, chases PRs and review threads, and rules JUSTIFIED / EXPIRED / COLD CASE. Also handles commit dossiers, regressions (bisect), incident traces, design rationale, and history-based repo tours.",
       "source": "./",
-      "description": "git blame tells you who. This tells you why. — alibi, the detective who never made an arrest, recovers the story behind your strangest code."
+      "category": "productivity"
     }
   ]
 }
