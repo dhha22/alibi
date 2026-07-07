@@ -35,11 +35,12 @@ git clone https://github.com/YOU/code-archaeology ~/.claude/skills/code-archaeol
 | **commit-to-story** | "why did this *commit/PR* land — what was the debate?" | dossier: problem → debate → decision → aftermath |
 | **first-broken** | "this *used to work* — which commit broke it?" | validated-probe bisect → culprit interrogated, verdict on intent |
 | **incident-trace** | "what *happened* with X — was it reverted, which releases had it?" | incident timeline + per-release exposure line |
+| **design-rationale** | "why is this *designed* this way — was anything else tried?" | precedent record: eras + alternatives on file, verdict on today |
+| **repo-tour** | "onboard me through this repo's *history* — where are the bodies buried?" | five-scene precinct tour + first-move disposition |
 
 Real transcripts against facebook/react: [why-not-who](examples/transcripts/why-not-who-react.md) ·
 [commit-to-story](examples/transcripts/commit-to-story-react.md)
 
 ---
 
-Status: v3 (why-not-who, commit-to-story, first-broken, incident-trace modes).
-Roadmap: design-rationale, repo-tour investigation modes.
+Status: v4 — all six investigation modes shipped.

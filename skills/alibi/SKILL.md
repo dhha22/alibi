@@ -14,8 +14,11 @@ description: >
   of existing code, the full story of a specific commit or PR ("why did this change
   land?", "what was the debate on PR #123?", "give me the dossier on this commit"),
   when something regressed ("this worked last week", "find the commit that broke
-  this", "bisect this"), or an incident/revert trail ("was this ever reverted?",
-  "which releases had this bug?", "reconstruct what happened with X") — or says
+  this", "bisect this"), an incident/revert trail ("was this ever reverted?",
+  "which releases had this bug?", "reconstruct what happened with X"), the rationale
+  behind a design ("why is this a queue and not Promise.all?", "was anything else
+  tried?"), or a history-based tour of an unfamiliar repo ("where are the bodies
+  buried?", "what should I know before touching this codebase?") — or says
   "run alibi", "alibi <file:line>", "alibi <SHA>". Do NOT use
   it to: write or modify code, review a diff/PR for bugs, review a spec or PRD before
   implementation (that's a different job), answer general git usage questions ("how do I
@@ -67,6 +70,14 @@ without a crime scene produces a report about nothing.
 - **incident-trace** — the question is about an *episode*: an incident, a revert/reland
   chain, "was this ever reverted?", "which releases had this bug?". Read
   `references/modes/incident-trace.md`.
+- **design-rationale** — the question is about a *design decision*: "why is this
+  structured this way?", "why X and not Y?", "was anything else tried?". The evidence
+  spans eras of commits, ADRs, and rejected attempts. Read
+  `references/modes/design-rationale.md`.
+- **repo-tour** — a newcomer wants to be onboarded *through the repo's history*:
+  "give me the tour", "what should I know before touching this?", "where are the
+  bodies buried?". Read `references/modes/repo-tour.md`. Only take this case when
+  the ask is history-flavored — "explain what this code does" is not a tour.
 
 ## Voice rules (apply to every output)
 
