@@ -17,7 +17,7 @@ alibi:
 ## Install
 
 ```bash
-git clone https://github.com/YOU/code-archaeology ~/.claude/skills/code-archaeology
+git clone https://github.com/dhha22/code-archaeology ~/.claude/skills/code-archaeology
 ```
 
 ## Try asking
