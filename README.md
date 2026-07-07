@@ -1,6 +1,12 @@
 # code-archaeology
 
+<p align="center">
+  <img src="docs/assets/alibi-hero.jpg" alt="alibi — the detective at his evidence board" width="820">
+</p>
+
 > **git blame tells you *who*. This tells you *why*.**
+>
+> 🌐 **[Landing page (EN)](https://dhha22.github.io/code-archaeology/)** · **[소개 페이지 (KO)](https://dhha22.github.io/code-archaeology/ko.html)**
 
 `alibi` is a Claude Code skill: a homicide detective with a 20-year career and an
 arrest rate of zero. Point him at a suspicious line and he skips the prettier commits
