@@ -6,7 +6,7 @@
 <title>alibi — git blame은 '누가'를 말한다. alibi는 '왜'를 말한다.</title>
 <meta name="description" content="alibi는 Claude Code 스킬입니다. '이 줄 왜 있어요? 지워도 돼요?'라고 물으면 — prettier 커밋을 걷어내고 진짜 기원 커밋을 찾아, 판결이 붙은 사건 파일(JUSTIFIED / EXPIRED / COLD CASE)로 답합니다.">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Shippori+Mincho:wght@700;800&family=JetBrains+Mono:wght@400;600;800&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@600;700;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Special+Elite&family=Shippori+Mincho:wght@700;800&family=JetBrains+Mono:wght@400;600;800&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@600;700;900&display=swap');
   :root{
     --paper:#f2efe6; --ink:#151412; --red:#c9252d; --gray:#6f6a60; --panel:#fffdf6;
     --type:'Special Elite','Noto Serif KR',serif;
@@ -42,10 +42,17 @@
   .hero .wrap{ position:relative; z-index:1; }
   .hero .kicker{ display:inline-block; font-family:var(--mono); font-size:12px; font-weight:800;
     letter-spacing:5px; text-transform:uppercase; color:var(--panel); background:var(--ink); padding:4px 14px; }
-  .hero h1{ font-family:var(--type); font-size:clamp(64px,11vw,110px); line-height:1;
-    margin:18px 0 4px; letter-spacing:-2px;
-    text-shadow:4px 4px 0 rgba(201,37,45,.25); }
-  .hero h1 .dot{ color:var(--red); }
+  .hero h1{ font-family:'Archivo Black',var(--sans); font-size:clamp(58px,10vw,104px); line-height:1;
+    margin:26px 0 10px; letter-spacing:-1px; }
+  .hero h1 .l{ display:inline-block; color:#fffdf6; -webkit-text-stroke:3px var(--ink);
+    text-shadow:5px 6px 0 var(--red), 9px 10px 0 var(--ink); }
+  .hero h1 .l:nth-child(1){ transform:rotate(-7deg) translateY(2px); }
+  .hero h1 .l:nth-child(2){ transform:rotate(4deg) translateY(-7px); }
+  .hero h1 .l:nth-child(3){ transform:rotate(-3deg) translateY(5px); }
+  .hero h1 .l:nth-child(4){ transform:rotate(5deg) translateY(-4px); }
+  .hero h1 .l:nth-child(5){ transform:rotate(-4deg) translateY(4px); }
+  .hero h1 .dot{ display:inline-block; color:var(--red); -webkit-text-stroke:3px var(--ink);
+    text-shadow:5px 6px 0 var(--ink); transform:rotate(6deg); }
   .hero .tag{ font-family:var(--mincho); font-size:clamp(18px,3vw,25px); font-weight:800; margin-top:4px; }
   .hero .tag em{ font-style:normal; color:var(--gray); }
   .hero .tag b{ color:var(--red); }
@@ -64,13 +71,13 @@
   .photo .label{ font-family:var(--type); font-size:14px; padding:10px 14px; text-align:left; background:var(--panel); }
   .photo .label b{ color:var(--red); }
 
-  .scene{ display:flex; align-items:center; justify-content:center; gap:26px; padding:56px 24px 60px; position:relative; z-index:1; }
-  .scene .face{ width:150px; flex:none; border:4px solid var(--ink); background:#fff;
-    box-shadow:6px 6px 0 var(--ink); transform:rotate(-2deg); }
+  .scene{ display:flex; align-items:center; justify-content:flex-start; gap:24px; padding:6px 0 30px; position:relative; z-index:1; }
+  .scene .face{ width:118px; flex:none; border:3px solid var(--ink); background:#fff;
+    box-shadow:5px 5px 0 var(--ink); transform:rotate(-2deg); }
   .scene .face img{ width:100%; display:block; }
-  .bubble{ position:relative; background:#fff; border:3px solid var(--ink); border-radius:28px;
-    padding:22px 30px; max-width:520px; font-family:var(--mincho); font-weight:800;
-    font-size:clamp(18px,2.8vw,24px); line-height:1.5; box-shadow:6px 6px 0 var(--ink); }
+  .bubble{ position:relative; background:#fff; border:3px solid var(--ink); border-radius:26px;
+    padding:16px 26px; max-width:520px; font-family:var(--mincho); font-weight:800;
+    font-size:clamp(17px,2.4vw,21px); line-height:1.5; box-shadow:5px 5px 0 var(--ink); }
   .bubble .r{ color:var(--red); }
   .bubble::before{ content:""; position:absolute; left:-24px; top:50%; transform:translateY(-50%);
     border:12px solid transparent; border-right:24px solid var(--ink); }
@@ -199,7 +206,7 @@
   <div class="burst"></div>
   <div class="wrap">
     <span class="kicker">Claude Code Skill · Git Archaeology</span>
-    <h1>alibi<span class="dot">.</span></h1>
+    <h1><span class="l">a</span><span class="l">l</span><span class="l">i</span><span class="l">b</span><span class="l">i</span><span class="dot">.</span></h1>
     <div class="tag"><em>git blame은</em> 누가<em>를 말한다.</em> <b>alibi는 왜를 말한다.</b></div>
     <p class="sub">Claude Code에 <b>“이 줄 왜 있어요? 지워도 돼요?”</b>라고 물으면 — alibi가
     blame이 엉뚱한 사람에게 뒤집어씌우는 포매팅 커밋들을 걷어내고, 그 줄을 진짜로 쓴 커밋을 찾아,
@@ -216,16 +223,14 @@
   </div>
 </header>
 
-<div class="scene">
-  <div class="face"><img src="assets/alibi-portrait.jpg" alt="alibi — 경력 20년, 검거율 0%, 의도된 기록"></div>
-  <div class="bubble">“범인을 데려오지 마.<br><span class="r">이야기를 가져와.</span>”</div>
-</div>
-
 <section id="quickstart">
   <div class="wrap">
     <div class="koma">
       <span class="tab">Page 01 · Quickstart</span>
-      <h2 class="sec">60초 안에 쓰기</h2>
+      <div class="scene">
+        <div class="face"><img src="assets/alibi-portrait.jpg" alt="alibi — 경력 20년, 검거율 0%, 의도된 기록"></div>
+        <div class="bubble">“사건 접수는 <span class="r">60초</span>면 충분해.<br>발품은 내가 판다.”</div>
+      </div>
       <div class="steps">
         <div class="step">
           <div class="n">1</div>

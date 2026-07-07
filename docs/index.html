@@ -6,7 +6,7 @@
 <title>alibi — git blame tells you who. alibi tells you why.</title>
 <meta name="description" content="alibi is a Claude Code skill: ask why a line of code exists — it digs past the prettier commits blame frames people with, finds the true origin, and returns a case file with a verdict: JUSTIFIED / EXPIRED / COLD CASE.">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Shippori+Mincho:wght@700;800&family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;500;700;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Special+Elite&family=Shippori+Mincho:wght@700;800&family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;500;700;900&display=swap');
   :root{
     --paper:#f2efe6; --ink:#151412; --red:#c9252d; --gray:#6f6a60; --panel:#fffdf6;
     --type:'Special Elite',cursive;
@@ -44,10 +44,17 @@
   .hero .wrap{ position:relative; z-index:1; }
   .hero .kicker{ display:inline-block; font-family:var(--mono); font-size:12px; font-weight:800;
     letter-spacing:5px; text-transform:uppercase; color:var(--panel); background:var(--ink); padding:4px 14px; }
-  .hero h1{ font-family:var(--type); font-size:clamp(64px,11vw,110px); line-height:1;
-    margin:18px 0 4px; letter-spacing:-2px;
-    text-shadow:4px 4px 0 rgba(201,37,45,.25); }
-  .hero h1 .dot{ color:var(--red); }
+  .hero h1{ font-family:'Archivo Black',var(--sans); font-size:clamp(58px,10vw,104px); line-height:1;
+    margin:26px 0 10px; letter-spacing:-1px; }
+  .hero h1 .l{ display:inline-block; color:#fffdf6; -webkit-text-stroke:3px var(--ink);
+    text-shadow:5px 6px 0 var(--red), 9px 10px 0 var(--ink); }
+  .hero h1 .l:nth-child(1){ transform:rotate(-7deg) translateY(2px); }
+  .hero h1 .l:nth-child(2){ transform:rotate(4deg) translateY(-7px); }
+  .hero h1 .l:nth-child(3){ transform:rotate(-3deg) translateY(5px); }
+  .hero h1 .l:nth-child(4){ transform:rotate(5deg) translateY(-4px); }
+  .hero h1 .l:nth-child(5){ transform:rotate(-4deg) translateY(4px); }
+  .hero h1 .dot{ display:inline-block; color:var(--red); -webkit-text-stroke:3px var(--ink);
+    text-shadow:5px 6px 0 var(--ink); transform:rotate(6deg); }
   .hero .tag{ font-family:var(--mincho); font-size:clamp(18px,3vw,25px); font-weight:800; margin-top:4px; }
   .hero .tag em{ font-style:normal; color:var(--gray); }
   .hero .tag b{ color:var(--red); }
@@ -68,13 +75,13 @@
   .photo .label b{ color:var(--red); }
 
   /* speech bubble scene */
-  .scene{ display:flex; align-items:center; justify-content:center; gap:26px; padding:56px 24px 60px; position:relative; z-index:1; }
-  .scene .face{ width:150px; flex:none; border:4px solid var(--ink); background:#fff;
-    box-shadow:6px 6px 0 var(--ink); transform:rotate(-2deg); }
+  .scene{ display:flex; align-items:center; justify-content:flex-start; gap:24px; padding:6px 0 30px; position:relative; z-index:1; }
+  .scene .face{ width:118px; flex:none; border:3px solid var(--ink); background:#fff;
+    box-shadow:5px 5px 0 var(--ink); transform:rotate(-2deg); }
   .scene .face img{ width:100%; display:block; }
-  .bubble{ position:relative; background:#fff; border:3px solid var(--ink); border-radius:28px;
-    padding:22px 30px; max-width:520px; font-family:var(--mincho); font-weight:800;
-    font-size:clamp(18px,2.8vw,24px); line-height:1.5; box-shadow:6px 6px 0 var(--ink); }
+  .bubble{ position:relative; background:#fff; border:3px solid var(--ink); border-radius:26px;
+    padding:16px 26px; max-width:520px; font-family:var(--mincho); font-weight:800;
+    font-size:clamp(17px,2.4vw,21px); line-height:1.5; box-shadow:5px 5px 0 var(--ink); }
   .bubble .r{ color:var(--red); }
   .bubble::before{ content:""; position:absolute; left:-24px; top:50%; transform:translateY(-50%);
     border:12px solid transparent; border-right:24px solid var(--ink); }
@@ -209,7 +216,7 @@
   <div class="burst"></div>
   <div class="wrap">
     <span class="kicker">Claude Code Skill · Git Archaeology</span>
-    <h1>alibi<span class="dot">.</span></h1>
+    <h1><span class="l">a</span><span class="l">l</span><span class="l">i</span><span class="l">b</span><span class="l">i</span><span class="dot">.</span></h1>
     <div class="tag"><em>git blame tells you</em> who<em>.</em> <b>alibi tells you why.</b></div>
     <p class="sub">Ask Claude Code <b>“why is this line here — can I delete it?”</b> and alibi digs
     past the formatting commits blame frames people with, finds the commit that really wrote it,
@@ -226,16 +233,14 @@
   </div>
 </header>
 
-<div class="scene">
-  <div class="face"><img src="assets/alibi-portrait.jpg" alt="alibi — 20 years on the force, arrest rate zero, on purpose"></div>
-  <div class="bubble">“Don't bring me a culprit.<br><span class="r">Bring me the story.</span>”</div>
-</div>
-
 <section id="quickstart">
   <div class="wrap">
     <div class="koma">
       <span class="tab">Page 01 · Quickstart</span>
-      <h2 class="sec">Use it in 60 seconds</h2>
+      <div class="scene">
+        <div class="face"><img src="assets/alibi-portrait.jpg" alt="alibi — 20 years on the force, arrest rate zero, on purpose"></div>
+        <div class="bubble">“Filing the case takes <span class="r">sixty seconds</span>.<br>The legwork's mine.”</div>
+      </div>
       <div class="steps">
         <div class="step">
           <div class="n">1</div>
