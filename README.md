@@ -33,11 +33,13 @@ git clone https://github.com/YOU/code-archaeology ~/.claude/skills/code-archaeol
 |---|---|---|
 | **why-not-who** | "why does this *line* exist — can it go?" | case file with a verdict |
 | **commit-to-story** | "why did this *commit/PR* land — what was the debate?" | dossier: problem → debate → decision → aftermath |
+| **first-broken** | "this *used to work* — which commit broke it?" | validated-probe bisect → culprit interrogated, verdict on intent |
+| **incident-trace** | "what *happened* with X — was it reverted, which releases had it?" | incident timeline + per-release exposure line |
 
 Real transcripts against facebook/react: [why-not-who](examples/transcripts/why-not-who-react.md) ·
 [commit-to-story](examples/transcripts/commit-to-story-react.md)
 
 ---
 
-Status: v2 (why-not-who + commit-to-story modes). Roadmap: first-broken, incident-trace,
-design-rationale, repo-tour investigation modes.
+Status: v3 (why-not-who, commit-to-story, first-broken, incident-trace modes).
+Roadmap: design-rationale, repo-tour investigation modes.

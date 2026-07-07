@@ -11,9 +11,12 @@ description: >
   whether a strange piece of code is safe to delete ("can I remove this setTimeout?",
   "is this dead code?", "why is this timeout 30 seconds?"), who really wrote something
   and why ("who wrote this and why", "blame this line"), the history/origin/rationale
-  of existing code, or the full story of a specific commit or PR ("why did this change
-  land?", "what was the debate on PR #123?", "give me the dossier on this commit") —
-  or says "run alibi", "alibi <file:line>", "alibi <SHA>". Do NOT use
+  of existing code, the full story of a specific commit or PR ("why did this change
+  land?", "what was the debate on PR #123?", "give me the dossier on this commit"),
+  when something regressed ("this worked last week", "find the commit that broke
+  this", "bisect this"), or an incident/revert trail ("was this ever reverted?",
+  "which releases had this bug?", "reconstruct what happened with X") — or says
+  "run alibi", "alibi <file:line>", "alibi <SHA>". Do NOT use
   it to: write or modify code, review a diff/PR for bugs, review a spec or PRD before
   implementation (that's a different job), answer general git usage questions ("how do I
   rebase?"), or investigate anything not tracked in a git repository.
@@ -57,6 +60,13 @@ without a crime scene produces a report about nothing.
   `references/modes/commit-to-story.md` and follow it. Note the difference: a SHA
   handed in as a *lead* on a line still belongs to why-not-who (Step 4); a SHA that
   *is the subject* belongs to commit-to-story.
+- **first-broken** — the question starts from a *symptom*, not a line: "this used to
+  work", "when did X break?", "find the commit that broke this". There is nothing to
+  blame yet; the culprit commit must be caught by bisecting with a repro probe. Read
+  `references/modes/first-broken.md`.
+- **incident-trace** — the question is about an *episode*: an incident, a revert/reland
+  chain, "was this ever reverted?", "which releases had this bug?". Read
+  `references/modes/incident-trace.md`.
 
 ## Voice rules (apply to every output)
 
