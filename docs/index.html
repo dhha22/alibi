@@ -6,164 +6,189 @@
 <title>alibi — git blame tells you who. alibi tells you why.</title>
 <meta name="description" content="alibi is a Claude Code skill: ask why a line of code exists — it digs past the prettier commits blame frames people with, finds the true origin, and returns a case file with a verdict: JUSTIFIED / EXPIRED / COLD CASE.">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;500;700;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Shippori+Mincho:wght@700;800&family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;500;700;900&display=swap');
   :root{
-    --night:#0e0e11; --card:#16161b; --card2:#1c1c23; --line:#2c2c36;
-    --ink:#e8e4da; --dim:#9b968a; --amber:#e3a43a; --red:#c2413b; --teal:#5aa39a;
+    --paper:#f2efe6; --ink:#151412; --red:#c9252d; --gray:#6f6a60; --panel:#fffdf6;
     --type:'Special Elite',cursive;
+    --mincho:'Shippori Mincho',serif;
     --mono:'JetBrains Mono',monospace;
     --sans:'Inter',sans-serif;
   }
   *{ margin:0; padding:0; box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
-  body{ background:var(--night); color:var(--ink); font-family:var(--sans); line-height:1.75; }
-  body::before{ content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
-    background:radial-gradient(ellipse 900px 520px at 72% -80px, rgba(227,164,58,.10), transparent 60%);
-  }
+  body{ background:var(--paper); color:var(--ink); font-family:var(--sans); line-height:1.75; }
+  /* screentone */
+  body::before{ content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.5;
+    background-image:radial-gradient(rgba(21,20,18,.10) 1px, transparent 1.2px);
+    background-size:7px 7px; }
   .wrap{ max-width:980px; margin:0 auto; padding:0 24px; position:relative; z-index:1; }
-  a{ color:var(--amber); }
+  a{ color:var(--red); }
 
-  .bar{ border-bottom:1px solid var(--line); background:rgba(14,14,17,.92); backdrop-filter:blur(6px);
-    position:sticky; top:0; z-index:20; }
-  .bar .wrap{ display:flex; align-items:center; gap:14px; padding:12px 24px; }
-  .bar .case{ font-family:var(--mono); font-size:12px; letter-spacing:2px; color:var(--dim); text-transform:uppercase; }
-  .bar .case b{ color:var(--amber); }
+  .bar{ border-bottom:3px solid var(--ink); background:var(--panel); position:sticky; top:0; z-index:20; }
+  .bar .wrap{ display:flex; align-items:center; gap:14px; padding:11px 24px; }
+  .bar .case{ font-family:var(--mono); font-size:12px; letter-spacing:2px; color:var(--gray); text-transform:uppercase; }
+  .bar .case b{ color:var(--red); }
   .bar .right{ margin-left:auto; display:flex; gap:8px; align-items:center; }
   .bar a.lng{ font-family:var(--mono); font-size:12px; font-weight:800; text-decoration:none;
-    color:var(--dim); border:1px solid var(--line); padding:4px 10px; }
-  .bar a.lng.on{ color:var(--night); background:var(--amber); border-color:var(--amber); }
+    color:var(--ink); border:2px solid var(--ink); padding:3px 10px; background:var(--panel); }
+  .bar a.lng.on{ color:var(--panel); background:var(--ink); }
   .bar a.gh{ font-family:var(--mono); font-size:12px; font-weight:800; text-decoration:none;
-    color:var(--ink); border:1px solid var(--ink); padding:4px 10px; }
+    color:var(--panel); background:var(--ink); border:2px solid var(--ink); padding:3px 10px; }
 
-  .hero{ padding:64px 0 0; text-align:center; }
-  .hero .kicker{ font-family:var(--mono); font-size:12px; font-weight:800; letter-spacing:6px;
-    text-transform:uppercase; color:var(--dim); }
-  .hero h1{ font-family:var(--type); font-size:clamp(60px,10vw,100px); line-height:1;
-    color:var(--ink); margin:10px 0 4px; text-shadow:0 0 40px rgba(227,164,58,.25); }
-  .hero h1 .dot{ color:var(--amber); }
-  .hero .tag{ font-size:clamp(18px,3vw,24px); font-weight:900; margin-top:6px; }
-  .hero .tag em{ font-style:normal; color:var(--dim); }
-  .hero .tag b{ color:var(--amber); }
-  .hero .sub{ color:var(--dim); max-width:660px; margin:14px auto 0; font-size:16px; }
+  /* hero with speed lines */
+  .hero{ padding:64px 0 56px; text-align:center; position:relative; overflow:hidden; }
+  .hero .burst{ position:absolute; inset:-40% -20%; z-index:0; pointer-events:none; opacity:.07;
+    background:repeating-conic-gradient(var(--ink) 0 1deg, transparent 1deg 7deg);
+    -webkit-mask-image:radial-gradient(ellipse 60% 55% at 50% 30%, #000 0 45%, transparent 72%);
+    mask-image:radial-gradient(ellipse 60% 55% at 50% 30%, #000 0 45%, transparent 72%); }
+  .hero .wrap{ position:relative; z-index:1; }
+  .hero .kicker{ display:inline-block; font-family:var(--mono); font-size:12px; font-weight:800;
+    letter-spacing:5px; text-transform:uppercase; color:var(--panel); background:var(--ink); padding:4px 14px; }
+  .hero h1{ font-family:var(--type); font-size:clamp(64px,11vw,110px); line-height:1;
+    margin:18px 0 4px; letter-spacing:-2px;
+    text-shadow:4px 4px 0 rgba(201,37,45,.25); }
+  .hero h1 .dot{ color:var(--red); }
+  .hero .tag{ font-family:var(--mincho); font-size:clamp(18px,3vw,25px); font-weight:800; margin-top:4px; }
+  .hero .tag em{ font-style:normal; color:var(--gray); }
+  .hero .tag b{ color:var(--red); }
+  .hero .sub{ color:#4d483f; max-width:660px; margin:14px auto 0; font-size:16px; }
   .hero .sub b{ color:var(--ink); }
-  .cta{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin:28px 0 44px; }
+  .cta{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin:28px 0 40px; }
   .btn{ font-family:var(--mono); font-weight:800; font-size:14px; text-decoration:none;
-    padding:12px 22px; border:1px solid var(--ink); color:var(--ink); }
-  .btn.amber{ background:var(--amber); color:var(--night); border-color:var(--amber); }
-  .btn:hover{ background:var(--card2); }
-  .btn.amber:hover{ background:#f0b654; }
+    padding:12px 22px; border:3px solid var(--ink); color:var(--ink); background:var(--panel);
+    box-shadow:5px 5px 0 var(--ink); transition:transform .08s, box-shadow .08s; }
+  .btn:hover{ transform:translate(2px,2px); box-shadow:3px 3px 0 var(--ink); }
+  .btn.red{ background:var(--red); color:#fff; }
 
-  .photo{ background:#f5f2ea; padding:12px 12px 0; max-width:920px; margin:0 auto;
-    box-shadow:0 24px 60px rgba(0,0,0,.55); transform:rotate(-.4deg); }
-  .photo img{ width:100%; display:block; }
-  .photo .label{ font-family:var(--type); color:#333; font-size:14px; padding:8px 4px 10px; text-align:left; }
+  /* hero image = a manga panel */
+  .photo{ border:4px solid var(--ink); background:var(--panel); box-shadow:10px 10px 0 var(--ink);
+    max-width:920px; margin:0 auto; position:relative; }
+  .photo img{ width:100%; display:block; border-bottom:3px solid var(--ink); }
+  .photo .label{ font-family:var(--type); font-size:14px; padding:10px 14px; text-align:left; background:var(--panel); }
   .photo .label b{ color:var(--red); }
 
-  .quote{ text-align:center; font-family:var(--type); font-size:clamp(20px,3.4vw,28px);
-    padding:54px 24px; color:var(--ink); }
-  .quote .r{ color:var(--amber); }
+  /* speech bubble scene */
+  .scene{ display:flex; align-items:center; justify-content:center; gap:26px; padding:56px 24px 60px; position:relative; z-index:1; }
+  .scene .face{ width:150px; flex:none; border:4px solid var(--ink); background:#fff;
+    box-shadow:6px 6px 0 var(--ink); transform:rotate(-2deg); }
+  .scene .face img{ width:100%; display:block; }
+  .bubble{ position:relative; background:#fff; border:3px solid var(--ink); border-radius:28px;
+    padding:22px 30px; max-width:520px; font-family:var(--mincho); font-weight:800;
+    font-size:clamp(18px,2.8vw,24px); line-height:1.5; box-shadow:6px 6px 0 var(--ink); }
+  .bubble .r{ color:var(--red); }
+  .bubble::before{ content:""; position:absolute; left:-24px; top:50%; transform:translateY(-50%);
+    border:12px solid transparent; border-right:24px solid var(--ink); }
+  .bubble::after{ content:""; position:absolute; left:-16px; top:50%; transform:translateY(-50%);
+    border:9px solid transparent; border-right:20px solid #fff; }
 
-  section{ padding:64px 0; border-top:1px solid var(--line); }
-  h2.sec{ font-family:var(--type); font-size:30px; margin-bottom:8px; }
-  h2.sec .num{ font-family:var(--mono); font-size:14px; color:var(--amber); margin-right:10px; letter-spacing:2px; }
-  .lead{ color:var(--dim); font-size:16px; max-width:740px; margin-bottom:28px; }
+  /* koma = manga panel section */
+  section{ padding:38px 0; }
+  .koma{ background:var(--panel); border:3px solid var(--ink); box-shadow:9px 9px 0 var(--ink);
+    padding:40px 38px; position:relative; }
+  .koma .tab{ position:absolute; top:-17px; left:-3px; background:var(--ink); color:var(--panel);
+    font-family:var(--mono); font-size:12.5px; font-weight:800; letter-spacing:2px;
+    padding:4px 16px; text-transform:uppercase; }
+  h2.sec{ font-family:var(--mincho); font-weight:800; font-size:29px; margin:4px 0 10px; }
+  .lead{ color:#4d483f; font-size:15.5px; max-width:760px; margin-bottom:26px; }
   .lead b, .lead strong{ color:var(--ink); }
 
   /* quickstart */
   .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
-  .step{ border:1px solid var(--line); background:var(--card); padding:22px; }
-  .step .n{ font-family:var(--type); font-size:34px; color:var(--amber); }
-  .step h3{ font-family:var(--mono); font-size:14px; letter-spacing:1px; text-transform:uppercase; margin:6px 0 12px; }
-  .step p{ font-size:14px; color:var(--dim); }
+  .step{ border:2px solid var(--ink); background:#fff; padding:20px; box-shadow:4px 4px 0 rgba(21,20,18,.85); min-width:0; }
+  .step .n{ font-family:var(--type); font-size:34px; color:var(--red); line-height:1; }
+  .step h3{ font-family:var(--mono); font-size:13.5px; letter-spacing:1px; text-transform:uppercase; margin:8px 0 10px; }
+  .step p{ font-size:13.5px; color:#4d483f; }
   .step p b{ color:var(--ink); }
-  .step .mini{ background:#0a0a0c; border:1px solid var(--line); font-family:var(--mono);
-    font-size:12.5px; padding:10px 12px; margin-top:12px; overflow:auto; line-height:1.6; white-space:pre; }
-  .step .mini .c{ color:#666; } .step .mini .y{ color:var(--amber); } .step .mini .g{ color:var(--teal); }
+  .step .mini{ background:var(--ink); color:#e8e4da; border:2px solid var(--ink); font-family:var(--mono);
+    font-size:12px; padding:10px 12px; margin-top:12px; overflow:auto; line-height:1.6; white-space:pre; }
+  .mini .c{ color:#8a857a; } .mini .y{ color:#e3a43a; } .mini .g{ color:#7fc7ae; }
 
   /* flow */
-  .youask{ background:var(--card2); border:1px solid var(--line); border-left:3px solid var(--amber);
-    font-size:16px; padding:16px 20px; margin-bottom:26px; }
-  .youask .who{ font-family:var(--mono); font-size:11.5px; letter-spacing:2px; color:var(--amber);
-    text-transform:uppercase; display:block; margin-bottom:4px; }
+  .youask{ background:#fff; border:3px solid var(--ink); border-radius:20px; position:relative;
+    font-family:var(--mincho); font-weight:700; font-size:16.5px; padding:16px 22px; margin-bottom:30px;
+    box-shadow:5px 5px 0 rgba(21,20,18,.85); }
+  .youask .who{ font-family:var(--mono); font-size:11px; letter-spacing:2px; color:var(--red);
+    text-transform:uppercase; display:block; margin-bottom:2px; }
   .flow{ list-style:none; }
-  .flow li{ display:grid; grid-template-columns:44px 1fr; gap:16px; padding:18px 0;
-    border-bottom:1px dashed var(--line); }
-  .flow li:last-child{ border-bottom:0; }
-  .flow .fn{ font-family:var(--type); font-size:26px; color:var(--amber); text-align:center; padding-top:2px; }
+  .flow li{ display:grid; grid-template-columns:48px 1fr; gap:16px; padding:20px 0;
+    border-bottom:2px dashed rgba(21,20,18,.35); }
+  .flow li > div{ min-width:0; }
+  .flow li:last-child{ border-bottom:0; padding-bottom:4px; }
+  .flow .fn{ font-family:var(--mincho); font-weight:800; font-size:26px; color:var(--panel);
+    background:var(--ink); width:44px; height:44px; display:flex; align-items:center; justify-content:center; }
   .flow h3{ font-family:var(--mono); font-size:14px; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
-  .flow p{ font-size:14.5px; color:var(--dim); }
+  .flow p{ font-size:14.5px; color:#4d483f; }
   .flow p b{ color:var(--ink); }
   .flow .term{ margin-top:10px; }
-  .term{ background:#0a0a0c; border:1px solid var(--line); font-family:var(--mono);
-    font-size:13px; padding:12px 16px; overflow:auto; line-height:1.65; white-space:pre; }
-  .term .c{ color:#666; } .term .g{ color:var(--teal); } .term .y{ color:var(--amber); } .term .r{ color:var(--red); }
+  .term{ background:var(--ink); color:#e8e4da; border:2px solid var(--ink); font-family:var(--mono);
+    font-size:13px; padding:12px 16px; overflow:auto; line-height:1.65; white-space:pre;
+    box-shadow:4px 4px 0 rgba(21,20,18,.35); }
+  .term .c{ color:#8a857a; } .term .g{ color:#7fc7ae; } .term .y{ color:#e3a43a; } .term .r{ color:#e0655f; }
 
-  /* verdicts */
-  .verdicts{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:26px; }
-  .vcard{ border:1px solid var(--line); background:var(--card); padding:20px; }
-  .vcard .mark{ font-size:26px; }
-  .vcard h3{ font-family:var(--mono); font-size:16px; margin:8px 0 6px; letter-spacing:1px; }
-  .vcard p{ font-size:13.5px; color:var(--dim); }
+  /* case file */
+  pre.case{ background:var(--ink); color:#e8e4da; border:3px solid var(--ink);
+    font-family:var(--mono); font-size:13px; line-height:1.7; padding:22px 24px; overflow:auto;
+    white-space:pre; box-shadow:7px 7px 0 rgba(21,20,18,.4); }
+  pre.case .h{ color:#e3a43a; font-weight:800; }
+  pre.case .v{ color:#7fc7ae; font-weight:800; }
+  pre.case .d{ color:#8a857a; }
+  pre.case .w{ color:#e8e4da; }
+
+  /* verdict stamps */
+  .verdicts{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:28px; }
+  .vcard{ border:2px solid var(--ink); background:#fff; padding:20px; box-shadow:4px 4px 0 rgba(21,20,18,.85); }
+  .vcard .stamp{ display:inline-block; font-family:var(--mono); font-weight:800; font-size:15px;
+    letter-spacing:1px; border:3px solid; padding:3px 12px; transform:rotate(-5deg); margin-bottom:12px; }
+  .vcard.j .stamp{ color:var(--ink); border-color:var(--ink); }
+  .vcard.e .stamp{ color:var(--red); border-color:var(--red); }
+  .vcard.c .stamp{ color:var(--gray); border-color:var(--gray); border-style:dashed; }
+  .vcard p{ font-size:13.5px; color:#4d483f; }
+  .vcard p b{ color:var(--ink); }
   .vcard .act{ display:block; margin-top:12px; font-family:var(--mono); font-size:12px; padding-top:10px;
-    border-top:1px dashed var(--line); }
-  .vcard.j{ border-top:3px solid var(--teal); } .vcard.j h3,.vcard.j .act{ color:var(--teal); }
-  .vcard.e{ border-top:3px solid var(--amber); } .vcard.e h3,.vcard.e .act{ color:var(--amber); }
-  .vcard.c{ border-top:3px solid var(--red); } .vcard.c h3,.vcard.c .act{ color:var(--red); }
+    border-top:2px dashed rgba(21,20,18,.3); }
+  .vcard.e .act{ color:var(--red); }
 
-  pre.case{ background:#0a0a0c; border:1px solid var(--line); border-left:3px solid var(--amber);
-    font-family:var(--mono); font-size:13px; line-height:1.7; padding:22px 24px; overflow:auto; white-space:pre; }
-  pre.case .h{ color:var(--amber); font-weight:800; }
-  pre.case .v{ color:var(--teal); font-weight:800; }
-  pre.case .d{ color:#666; }
-  pre.case .w{ color:var(--ink); }
+  .creed{ border:3px solid var(--ink); background:#fff; border-radius:18px;
+    padding:18px 22px; margin-top:26px; color:#4d483f; font-size:15px; box-shadow:5px 5px 0 rgba(21,20,18,.85); }
+  .creed b{ color:var(--red); }
 
-  .creed{ border:1px solid var(--line); border-left:3px solid var(--teal); background:var(--card);
-    padding:18px 22px; margin-top:24px; color:var(--dim); font-size:15px; }
-  .creed b{ color:var(--teal); }
-
-  /* modes: ask → get */
-  .mode{ border:1px solid var(--line); background:var(--card); margin-bottom:14px;
-    display:grid; grid-template-columns:170px 1fr 1fr; }
-  .mode .mn{ font-family:var(--mono); font-weight:800; font-size:13.5px; padding:16px; border-right:1px solid var(--line);
-    color:var(--amber); }
-  .mode .mn small{ display:block; font-weight:400; color:var(--dim); font-size:11.5px; letter-spacing:.5px; margin-top:2px; }
-  .mode .ask{ padding:16px; font-size:14px; border-right:1px dashed var(--line); }
-  .mode .ask::before{ content:"YOU ASK"; display:block; font-family:var(--mono); font-size:10.5px;
-    letter-spacing:2px; color:var(--dim); margin-bottom:4px; }
-  .mode .get{ padding:16px; font-size:13.5px; color:var(--dim); }
+  /* modes ask/get */
+  .mode{ border:2px solid var(--ink); background:#fff; margin-bottom:14px;
+    display:grid; grid-template-columns:170px 1fr 1fr; box-shadow:4px 4px 0 rgba(21,20,18,.85); }
+  .mode > div{ min-width:0; }
+  .mode .mn{ font-family:var(--mono); font-weight:800; font-size:13.5px; padding:15px;
+    border-right:2px solid var(--ink); background:var(--ink); color:var(--panel); }
+  .mode .mn small{ display:block; font-weight:400; color:#b9b3a6; font-size:11px; letter-spacing:.5px; margin-top:2px; }
+  .mode .ask{ padding:15px; font-size:14px; border-right:2px dashed rgba(21,20,18,.3); font-family:var(--mincho); font-weight:700; }
+  .mode .ask::before{ content:"YOU ASK"; display:block; font-family:var(--mono); font-weight:400; font-size:10px;
+    letter-spacing:2px; color:var(--gray); margin-bottom:4px; }
+  .mode .get{ padding:15px; font-size:13.5px; color:#4d483f; }
   .mode .get b{ color:var(--ink); }
-  .mode .get::before{ content:"YOU GET"; display:block; font-family:var(--mono); font-size:10.5px;
-    letter-spacing:2px; color:var(--teal); margin-bottom:4px; }
+  .mode .get::before{ content:"YOU GET"; display:block; font-family:var(--mono); font-size:10px;
+    letter-spacing:2px; color:var(--red); margin-bottom:4px; }
 
-  /* detective aside */
-  .dossier{ display:grid; grid-template-columns:170px 1fr; gap:28px; align-items:center; }
-  .mug{ background:#f5f2ea; padding:8px 8px 4px; transform:rotate(1.6deg);
-    box-shadow:0 14px 34px rgba(0,0,0,.5); position:relative; }
-  .mug::before{ content:""; position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(-3deg);
-    width:80px; height:20px; background:rgba(210,200,170,.8); }
-  .mug img{ width:100%; display:block; }
-  .mug .cap{ font-family:var(--type); color:#333; font-size:11px; text-align:center; padding:5px 0 3px; }
-  .bio{ color:var(--dim); font-size:15px; }
-  .bio b{ color:var(--ink); }
+  pre.install{ background:var(--ink); color:#e8e4da; border:3px solid var(--ink); font-family:var(--mono);
+    font-size:14px; padding:18px 20px; overflow:auto; box-shadow:6px 6px 0 rgba(21,20,18,.4); }
+  pre.install .c{ color:#8a857a; }
+  code{ font-family:var(--mono); background:rgba(21,20,18,.08); border:1px solid rgba(21,20,18,.2); padding:0 5px; font-size:.9em; }
 
-  pre.install{ background:#0a0a0c; border:1px solid var(--line); font-family:var(--mono);
-    font-size:14px; padding:18px 20px; overflow:auto; }
-  pre.install .c{ color:#666; }
-  code{ font-family:var(--mono); background:var(--card2); padding:1px 6px; font-size:.9em; }
-
-  footer{ text-align:center; padding:56px 24px 64px; border-top:1px solid var(--line); }
-  footer .close{ font-family:var(--type); font-size:22px; color:var(--ink); }
-  footer .close .r{ color:var(--amber); }
-  footer .fine{ font-family:var(--mono); font-size:12px; color:var(--dim); margin-top:14px; }
-  footer .fine a{ color:var(--dim); }
+  footer{ background:var(--ink); color:var(--paper); text-align:center; padding:52px 24px 58px;
+    border-top:4px solid var(--ink); margin-top:40px; position:relative; z-index:1; }
+  footer .close{ font-family:var(--mincho); font-weight:800; font-size:23px; }
+  footer .close .r{ color:#e0655f; }
+  footer .tsuzuku{ font-family:var(--mincho); font-size:13px; color:#8a857a; margin-top:16px; letter-spacing:4px; }
+  footer .fine{ font-family:var(--mono); font-size:12px; color:#8a857a; margin-top:8px; }
+  footer .fine a{ color:#b9b3a6; }
 
   @media(max-width:860px){
     .steps,.verdicts{ grid-template-columns:1fr; }
     .mode{ grid-template-columns:1fr; }
-    .mode .mn{ border-right:0; border-bottom:1px solid var(--line); }
-    .mode .ask{ border-right:0; border-bottom:1px dashed var(--line); }
-    .dossier{ grid-template-columns:1fr; }
-    .mug{ max-width:200px; margin:0 auto; }
+    .mode .mn{ border-right:0; border-bottom:2px solid var(--ink); }
+    .mode .ask{ border-right:0; border-bottom:2px dashed rgba(21,20,18,.3); }
+    .scene{ flex-direction:column; }
+    .bubble::before{ left:50%; top:-24px; transform:translateX(-50%) rotate(90deg); }
+    .bubble::after{ left:50%; top:-16px; transform:translateX(-50%) rotate(90deg); }
+    .koma{ padding:32px 22px; }
   }
 </style>
 </head>
@@ -171,7 +196,7 @@
 
 <nav class="bar">
   <div class="wrap">
-    <span class="case">Precinct · Claude Code Skills — Case: <b>alibi</b></span>
+    <span class="case">週刊 Claude Code Skills — Case: <b>alibi</b></span>
     <span class="right">
       <a class="lng on" href="index.html">EN</a>
       <a class="lng" href="ko.html">KO</a>
@@ -181,15 +206,16 @@
 </nav>
 
 <header class="hero">
+  <div class="burst"></div>
   <div class="wrap">
-    <div class="kicker">Claude Code Skill · Git Archaeology</div>
+    <span class="kicker">Claude Code Skill · Git Archaeology</span>
     <h1>alibi<span class="dot">.</span></h1>
     <div class="tag"><em>git blame tells you</em> who<em>.</em> <b>alibi tells you why.</b></div>
     <p class="sub">Ask Claude Code <b>“why is this line here — can I delete it?”</b> and alibi digs
     past the formatting commits blame frames people with, finds the commit that really wrote it,
     reads the PR and review thread, and hands you back a <b>case file with a verdict</b>.</p>
     <div class="cta">
-      <a class="btn amber" href="#quickstart">Use it in 60 seconds →</a>
+      <a class="btn red" href="#quickstart">Use it in 60 seconds →</a>
       <a class="btn" href="#flow">What happens when you ask</a>
       <a class="btn" href="#casefile">What you get back</a>
     </div>
@@ -200,36 +226,42 @@
   </div>
 </header>
 
-<div class="quote">“Don't bring me a culprit. <span class="r">Bring me the story.</span>”</div>
+<div class="scene">
+  <div class="face"><img src="assets/alibi-portrait.jpg" alt="alibi — 20 years on the force, arrest rate zero, on purpose"></div>
+  <div class="bubble">“Don't bring me a culprit.<br><span class="r">Bring me the story.</span>”</div>
+</div>
 
 <section id="quickstart">
   <div class="wrap">
-    <h2 class="sec"><span class="num">STEP BY STEP</span>Use it in 60 seconds</h2>
-    <div class="steps">
-      <div class="step">
-        <div class="n">1</div>
-        <h3>Install once</h3>
-        <p>Two prompts inside Claude Code:</p>
-        <div class="mini"><span class="y">/plugin marketplace add</span> dhha22/code-archaeology
+    <div class="koma">
+      <span class="tab">Page 01 · Quickstart</span>
+      <h2 class="sec">Use it in 60 seconds</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <h3>Install once</h3>
+          <p>Two prompts inside Claude Code:</p>
+          <div class="mini"><span class="y">/plugin marketplace add</span> dhha22/code-archaeology
 <span class="y">/plugin install</span> alibi@code-archaeology</div>
-      </div>
-      <div class="step">
-        <div class="n">2</div>
-        <h3>Ask what you were already wondering</h3>
-        <p>No command needed — a natural question triggers it. Point at a
-        <b>file:line</b>, a <b>SHA</b>, or just paste the weird code:</p>
-        <div class="mini"><span class="c">&gt;</span> why is this timeout 30 seconds?
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <h3>Ask what you were already wondering</h3>
+          <p>No command needed — a natural question triggers it. Point at a
+          <b>file:line</b>, a <b>SHA</b>, or just paste the weird code:</p>
+          <div class="mini"><span class="c">&gt;</span> why is this timeout 30 seconds?
 <span class="c">&gt;</span> can I delete this setTimeout?
 <span class="c">&gt;</span> <span class="y">/alibi</span> src/db/client.ts:88</div>
-      </div>
-      <div class="step">
-        <div class="n">3</div>
-        <h3>Read the verdict</h3>
-        <p>Every answer closes with one of three rulings and the evidence behind it —
-        so you know what to do next:</p>
-        <div class="mini"><span class="g">⚖️ JUSTIFIED</span>  <span class="c">→ don't touch it</span>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <h3>Read the verdict</h3>
+          <p>Every answer closes with one of three rulings and the evidence behind it —
+          so you know <b>what to do next</b>:</p>
+          <div class="mini"><span class="g">⚖️ JUSTIFIED</span>  <span class="c">→ don't touch it</span>
 <span class="y">⌛ EXPIRED</span>    <span class="c">→ safe to remove</span>
 <span class="c">🕳️ COLD CASE  → ask these people</span></div>
+        </div>
       </div>
     </div>
   </div>
@@ -237,62 +269,67 @@
 
 <section id="flow">
   <div class="wrap">
-    <h2 class="sec"><span class="num">FILE 01</span>What happens when you ask</h2>
-    <div class="youask"><span class="who">You ask</span>
-    “There's a mystery <code>setTimeout(resolve, 0)</code> in db/client.ts:88 — can I delete it?”</div>
-    <ol class="flow">
-      <li>
-        <span class="fn">①</span>
-        <div>
-          <h3>Blame — properly armed</h3>
-          <p>alibi never runs bare <code>git blame</code>. It arms it with <code>-w</code> and the
-          repo's ignore-revs file, because the bare form is precisely the tool that lies:</p>
-          <div class="term"><span class="c">$ git blame -w -L 88,88 db/client.ts</span>
+    <div class="koma">
+      <span class="tab">Page 02 · The Investigation</span>
+      <h2 class="sec">What happens when you ask</h2>
+      <div class="youask"><span class="who">You ask</span>
+      “There's a mystery <code>setTimeout(resolve, 0)</code> in db/client.ts:88 — can I delete it?”</div>
+      <ol class="flow">
+        <li>
+          <span class="fn">一</span>
+          <div>
+            <h3>Blame — properly armed</h3>
+            <p>alibi never runs bare <code>git blame</code>. It arms it with <code>-w</code> and the
+            repo's ignore-revs file, because the bare form is precisely the tool that lies:</p>
+            <div class="term"><span class="c">$ git blame -w -L 88,88 db/client.ts</span>
 <span class="r">a1b2c3d</span> (@dohyun 2023) "style: apply prettier" <span class="c">— 412 files changed</span></div>
-        </div>
-      </li>
-      <li>
-        <span class="fn">②</span>
-        <div>
-          <h3>The noise-judgment loop</h3>
-          <p>Is that commit <b>formatting noise</b>? alibi proves it (empty <code>-w</code> diff,
-          mass-touch shape), excludes it, and re-blames — repeating until it reaches the commit
-          that authored the line's <b>meaning</b>:</p>
-          <div class="term"><span class="c">$ git blame -w --ignore-rev a1b2c3d -L 88,88 db/client.ts</span>
+          </div>
+        </li>
+        <li>
+          <span class="fn">二</span>
+          <div>
+            <h3>The noise-judgment loop</h3>
+            <p>Is that commit <b>formatting noise</b>? alibi proves it (empty <code>-w</code> diff,
+            mass-touch shape), excludes it, and re-blames — repeating until it reaches the commit
+            that authored the line's <b>meaning</b>:</p>
+            <div class="term"><span class="c">$ git blame -w --ignore-rev a1b2c3d -L 88,88 db/client.ts</span>
 <span class="g">4f2a91c</span> (@minji 2021) "fix: safari indexeddb tx race" <span class="c">← the true origin</span></div>
-        </div>
-      </li>
-      <li>
-        <span class="fn">③</span>
-        <div>
-          <h3>Chase the story off-git</h3>
-          <p>With the <code>gh</code> CLI it follows the origin commit into the <b>PR, linked issues,
-          and review comments</b> — where the actual reasons live. (No <code>gh</code>? It closes the
-          case on git evidence alone and says so honestly.)</p>
-          <div class="term"><span class="c">$ gh api repos/:owner/:repo/commits/4f2a91c/pulls</span>
+          </div>
+        </li>
+        <li>
+          <span class="fn">三</span>
+          <div>
+            <h3>Chase the story off-git</h3>
+            <p>With the <code>gh</code> CLI it follows the origin commit into the <b>PR, linked issues,
+            and review comments</b> — where the actual reasons live. (No <code>gh</code>? It closes the
+            case on git evidence alone and says so honestly.)</p>
+            <div class="term"><span class="c">$ gh api repos/:owner/:repo/commits/4f2a91c/pulls</span>
 PR #482 <span class="c">— "Safari 14 WebKit bug workaround"</span>
 reviewer: <span class="y">"ugly but necessary — remove when WebKit fixes it"</span></div>
-        </div>
-      </li>
-      <li>
-        <span class="fn">④</span>
-        <div>
-          <h3>Check whether the reason still holds today</h3>
-          <p>The verdict hinges on <b>now</b>, not 2021: does the bug still exist? Is the platform
-          still supported? Here <code>BROWSERS.md</code> shows Safari 14 support was dropped in
-          2023 — the reason is dead. Verdict: <b>⌛ EXPIRED</b>.</p>
-        </div>
-      </li>
-    </ol>
+          </div>
+        </li>
+        <li>
+          <span class="fn">四</span>
+          <div>
+            <h3>Check whether the reason still holds today</h3>
+            <p>The verdict hinges on <b>now</b>, not 2021: does the bug still exist? Is the platform
+            still supported? Here <code>BROWSERS.md</code> shows Safari 14 support was dropped in
+            2023 — the reason is dead. Verdict: <b>⌛ EXPIRED</b>.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
   </div>
 </section>
 
 <section id="casefile">
   <div class="wrap">
-    <h2 class="sec"><span class="num">FILE 02</span>What you get back</h2>
-    <p class="lead">Every investigation ends in this exact report — exhibits (E-n), witness
-    statements (W-n), a deduction chain, and a verdict. <b>No evidence, no claim; no verdict, no
-    report.</b> The disposition stays yours.</p>
+    <div class="koma">
+      <span class="tab">Page 03 · The Case File</span>
+      <h2 class="sec">What you get back</h2>
+      <p class="lead">Every investigation ends in this exact report — exhibits (E-n), witness
+      statements (W-n), a deduction chain, and a verdict. <b>No evidence, no claim; no verdict, no
+      report.</b> The disposition stays yours.</p>
 <pre class="case"><span class="h">🗂️  CASE #4f2a91c — "can this setTimeout(resolve, 0) be deleted?"</span>
 ────────────────────────────────────────────────────────
 
@@ -322,96 +359,82 @@ reviewer: <span class="y">"ugly but necessary — remove when WebKit fixes it"</
 <span class="h">🔗 Related</span><span class="w">   SHA: 4f2a91c   PR: #482</span>
 
 <span class="d">"This line served faithfully for five years. Give it an honorable discharge."</span></pre>
-    <div class="verdicts">
-      <div class="vcard j">
-        <div class="mark">⚖️</div>
-        <h3>JUSTIFIED</h3>
-        <p>The reason was real — <b>and still holds</b>.</p>
-        <span class="act">→ Don't touch it. The fence has a purpose.</span>
+      <div class="verdicts">
+        <div class="vcard j">
+          <span class="stamp">⚖️ JUSTIFIED</span>
+          <p>The reason was real — <b>and still holds</b>.</p>
+          <span class="act">→ Don't touch it. The fence has a purpose.</span>
+        </div>
+        <div class="vcard e">
+          <span class="stamp">⌛ EXPIRED</span>
+          <p>The reason was real, but <b>it died</b>.</p>
+          <span class="act">→ Safe to remove, precautions attached.</span>
+        </div>
+        <div class="vcard c">
+          <span class="stamp">🕳️ COLD CASE</span>
+          <p>The reason <b>could not be found</b>. alibi never invents one.</p>
+          <span class="act">→ Maximum caution. Here are the last witnesses.</span>
+        </div>
       </div>
-      <div class="vcard e">
-        <div class="mark">⌛</div>
-        <h3>EXPIRED</h3>
-        <p>The reason was real, but <b>it died</b>.</p>
-        <span class="act">→ Safe to remove, precautions attached.</span>
-      </div>
-      <div class="vcard c">
-        <div class="mark">🕳️</div>
-        <h3>COLD CASE</h3>
-        <p>The reason <b>could not be found</b>. alibi never invents one.</p>
-        <span class="act">→ Maximum caution. Here are the last witnesses.</span>
-      </div>
+      <div class="creed">🕊️ <b>People are never suspects.</b> Every human in a case file is a
+      <b>witness</b> — never a blame target. “@minji is not a suspect; she is this case's key witness.”</div>
+      <p class="lead" style="margin-top:24px; margin-bottom:0;">Real transcripts against
+      <b>facebook/react</b>: <a href="https://github.com/dhha22/code-archaeology/blob/main/examples/transcripts/why-not-who-react.md">why-not-who</a> ·
+      <a href="https://github.com/dhha22/code-archaeology/blob/main/examples/transcripts/commit-to-story-react.md">commit-to-story</a></p>
     </div>
-    <div class="creed">🕊️ <b>People are never suspects.</b> Every human in a case file is a
-    <b>witness</b> — never a blame target. “@minji is not a suspect; she is this case's key witness.”</div>
-    <p class="lead" style="margin-top:24px; margin-bottom:0;">Real transcripts against
-    <b>facebook/react</b>: <a href="https://github.com/dhha22/code-archaeology/blob/main/examples/transcripts/why-not-who-react.md">why-not-who</a> ·
-    <a href="https://github.com/dhha22/code-archaeology/blob/main/examples/transcripts/commit-to-story-react.md">commit-to-story</a></p>
   </div>
 </section>
 
 <section id="modes">
   <div class="wrap">
-    <h2 class="sec"><span class="num">FILE 03</span>Six kinds of questions it answers</h2>
-    <p class="lead">Ask naturally — alibi picks the investigation mode from the shape of your
-    question. Each mode returns a different report, always evidence-pinned, always with a verdict
-    or disposition.</p>
-    <div class="mode">
-      <div class="mn">why-not-who<small>default</small></div>
-      <div class="ask">“Why is this timeout 30 seconds? Can I change it?”</div>
-      <div class="get">A <b>case file</b> (like the one above): true origin commit, PR rationale, verdict on whether the reason still holds.</div>
-    </div>
-    <div class="mode">
-      <div class="mn">commit-to-story</div>
-      <div class="ask">“Give me the full story of commit 4f2a91c — why did this land?”</div>
-      <div class="get">A <b>dossier</b>: the problem it solved → the debate in review → the decision → what happened after it shipped.</div>
-    </div>
-    <div class="mode">
-      <div class="mn">first-broken</div>
-      <div class="ask">“Export worked last week and now returns 0 — find the commit that broke it.”</div>
-      <div class="get">A <b>stakeout log</b>: repro probe validated on both ends, <code>git bisect run</code>, the culprit commit interrogated — accident or intent.</div>
-    </div>
-    <div class="mode">
-      <div class="mn">incident-trace</div>
-      <div class="ask">“Was the parallel-upload change ever reverted? Which releases had it?”</div>
-      <div class="get">An <b>incident timeline</b>: land → revert → reland chain, plus an Exposure line — exactly which tags/releases carried the bug.</div>
-    </div>
-    <div class="mode">
-      <div class="mn">design-rationale</div>
-      <div class="ask">“Why is upload a sequential queue and not Promise.all? Was anything else tried?”</div>
-      <div class="get">A <b>precedent record</b>: the design eras, the alternatives that were tried and rejected (with proof), and whether the decision still holds today.</div>
-    </div>
-    <div class="mode">
-      <div class="mn">repo-tour</div>
-      <div class="ask">“I just joined — onboard me through this repo's history. Where are the bodies buried?”</div>
-      <div class="get">A <b>five-scene precinct tour</b>: the churn hotspot, the scar (revert saga), the load-bearing old guard, blame hygiene — and your safest first move.</div>
-    </div>
-  </div>
-</section>
-
-<section id="detective">
-  <div class="wrap">
-    <h2 class="sec"><span class="num">FILE 04</span>Who's on the case</h2>
-    <div class="dossier">
-      <div class="mug">
-        <img src="assets/alibi-portrait.jpg" alt="Portrait of the alibi detective">
-        <div class="cap">personnel file — homicide div.</div>
+    <div class="koma">
+      <span class="tab">Page 04 · Six Cases</span>
+      <h2 class="sec">Six kinds of questions it answers</h2>
+      <p class="lead">Ask naturally — alibi picks the investigation mode from the shape of your
+      question. Each mode returns a different report, always evidence-pinned, always with a verdict
+      or disposition.</p>
+      <div class="mode">
+        <div class="mn">why-not-who<small>default</small></div>
+        <div class="ask">“Why is this timeout 30 seconds? Can I change it?”</div>
+        <div class="get">A <b>case file</b> (like the one above): true origin commit, PR rationale, verdict on whether the reason still holds.</div>
       </div>
-      <p class="bio">A homicide detective — <b>20 years on the force, arrest rate zero, on
-      purpose</b>. As a rookie, a botched rebase left his name on a hotfix he never wrote, and he
-      alone was grilled for it. Since that day he doesn't trust the name blame points at: he asks
-      <b>“what happened here”</b>, never “who did this”. He has no authority to approve or reject
-      anything — he establishes the facts; <b>the decision is always yours</b>.</p>
+      <div class="mode">
+        <div class="mn">commit-to-story</div>
+        <div class="ask">“Give me the full story of commit 4f2a91c — why did this land?”</div>
+        <div class="get">A <b>dossier</b>: the problem it solved → the debate in review → the decision → what happened after it shipped.</div>
+      </div>
+      <div class="mode">
+        <div class="mn">first-broken</div>
+        <div class="ask">“Export worked last week and now returns 0 — find the commit that broke it.”</div>
+        <div class="get">A <b>stakeout log</b>: repro probe validated on both ends, <code>git bisect run</code>, the culprit commit interrogated — accident or intent.</div>
+      </div>
+      <div class="mode">
+        <div class="mn">incident-trace</div>
+        <div class="ask">“Was the parallel-upload change ever reverted? Which releases had it?”</div>
+        <div class="get">An <b>incident timeline</b>: land → revert → reland chain, plus an Exposure line — exactly which tags/releases carried the bug.</div>
+      </div>
+      <div class="mode">
+        <div class="mn">design-rationale</div>
+        <div class="ask">“Why is upload a sequential queue and not Promise.all? Was anything else tried?”</div>
+        <div class="get">A <b>precedent record</b>: the design eras, the alternatives tried and rejected (with proof), and whether the decision still holds today.</div>
+      </div>
+      <div class="mode">
+        <div class="mn">repo-tour</div>
+        <div class="ask">“I just joined — onboard me through this repo's history. Where are the bodies buried?”</div>
+        <div class="get">A <b>five-scene precinct tour</b>: the churn hotspot, the scar (revert saga), the load-bearing old guard, blame hygiene — and your safest first move.</div>
+      </div>
     </div>
   </div>
 </section>
 
 <section id="install">
   <div class="wrap">
-    <h2 class="sec"><span class="num">FILE 05</span>Install</h2>
-    <p class="lead">Two prompts inside Claude Code and the detective reports for duty. Works best
-    with the <code>gh</code> CLI authenticated (for PR and review-thread witness statements) — but
-    degrades gracefully to git-only evidence without it.</p>
+    <div class="koma">
+      <span class="tab">Page 05 · Install</span>
+      <h2 class="sec">Install</h2>
+      <p class="lead">Two prompts inside Claude Code and the detective reports for duty. Works best
+      with the <code>gh</code> CLI authenticated (for PR and review-thread witness statements) — but
+      degrades gracefully to git-only evidence without it.</p>
 <pre class="install"><span class="c"># install as a Claude Code plugin</span>
 /plugin marketplace add dhha22/code-archaeology
 /plugin install alibi@code-archaeology
@@ -419,11 +442,13 @@ reviewer: <span class="y">"ugly but necessary — remove when WebKit fixes it"</
 <span class="c"># or install the skill by hand</span>
 git clone https://github.com/dhha22/code-archaeology
 cp -r code-archaeology/skills/alibi ~/.claude/skills/alibi</pre>
+    </div>
   </div>
 </section>
 
 <footer>
   <div class="close">No code is guilty. <span class="r">It just has a past.</span></div>
+  <div class="tsuzuku">— つづく · continued in your repo —</div>
   <div class="fine">alibi · a Claude Code skill · <a href="https://github.com/dhha22/code-archaeology">github.com/dhha22/code-archaeology</a></div>
 </footer>
 
