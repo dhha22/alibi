@@ -1,4 +1,4 @@
-# code-archaeology
+# alibi
 
 <p align="center">
   <img src="docs/assets/alibi-hero.jpg" alt="alibi — the detective at his evidence board" width="820">
@@ -6,7 +6,7 @@
 
 > **git blame tells you *who*. This tells you *why*.**
 >
-> 🌐 **[Landing page (EN)](https://dhha22.github.io/code-archaeology/)** · **[소개 페이지 (KO)](https://dhha22.github.io/code-archaeology/ko.html)**
+> 🌐 **[Landing page (EN)](https://dhha22.github.io/alibi/)** · **[소개 페이지 (KO)](https://dhha22.github.io/alibi/ko.html)**
 
 `alibi` is a Claude Code skill: a homicide detective with a 20-year career and an
 arrest rate of zero. Point him at a suspicious line and he skips the prettier commits
@@ -25,15 +25,15 @@ alibi:
 Install as a Claude Code plugin (two prompts):
 
 ```
-/plugin marketplace add dhha22/code-archaeology
-/plugin install alibi@code-archaeology
+/plugin marketplace add dhha22/alibi
+/plugin install alibi@alibi
 ```
 
 Or, if you prefer to install the skill by hand, copy the folder into your skills directory:
 
 ```bash
-git clone https://github.com/dhha22/code-archaeology
-cp -r code-archaeology/skills/alibi ~/.claude/skills/alibi
+git clone https://github.com/dhha22/alibi
+cp -r alibi/skills/alibi ~/.claude/skills/alibi
 ```
 
 ## Try asking

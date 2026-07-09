@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Git-archaeology detective that recovers WHY code exists — not just who last touched it. Skips the formatting commits blame keeps framing people with, digs to the true origin commit, chases PRs/issues/review threads, and rules on the code's alibi: JUSTIFIED / EXPIRED / COLD CASE. Six investigation modes: why-not-who, commit-to-story, first-broken (bisect), incident-trace, design-rationale, repo-tour.",
   "author": {
-    "name": "harada.ha",
+    "name": "dhha22",
     "url": "https://github.com/dhha22"
   }
 }

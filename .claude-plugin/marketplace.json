@@ -1,9 +1,9 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "code-archaeology",
+  "name": "alibi",
   "description": "Git-archaeology skills. alibi: the detective who tells you WHY the code exists, not who to blame.",
   "owner": {
-    "name": "harada.ha",
+    "name": "dhha22",
     "url": "https://github.com/dhha22"
   },
   "plugins": [
