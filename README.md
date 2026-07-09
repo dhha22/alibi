@@ -36,6 +36,24 @@ git clone https://github.com/dhha22/alibi
 cp -r alibi/skills/alibi ~/.claude/skills/alibi
 ```
 
+### Connect the `gh` CLI (recommended)
+
+alibi chases each line's story through PRs, issues, and review threads — the reasons that
+live nowhere in git objects. To reach them it needs the [GitHub CLI](https://cli.github.com/)
+installed and authenticated. Without it, alibi still works from git history alone and says
+so in the verdict.
+
+```bash
+# install the gh CLI (macOS · Homebrew)
+brew install gh
+
+# authenticate your GitHub account — one browser prompt
+gh auth login
+
+# verify the connection
+gh auth status
+```
+
 ## Try asking
 
 - "Why is this timeout 30 seconds? `src/auth/session.ts:47`"
